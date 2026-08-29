@@ -1,0 +1,50 @@
+replicaCount: 2
+
+image:
+  repository: devops-test
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+greetingName: "default"
+
+ingress:
+  enabled: true
+  hosts:
+    - host: localhost
+      paths:
+        - path: /
+          pathType: Prefix
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+livenessProbe:
+  httpGet:
+    path: /healthz
+    port: http
+  failureThreshold: 5
+  initialDelaySeconds: 30
+  periodSeconds: 10
+readinessProbe:
+  httpGet:
+    path: /readyz
+    port: http
+  failureThreshold: 5
+  initialDelaySeconds: 30
+  periodSeconds: 10
+
+affinity:
+  podAntiAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+    - labelSelector:
+        matchExpressions:
+        - key: app.kubernetes.io/name
+          operator: In
+          values:
+          - devops-test
+      topologyKey: "kubernetes.io/hostname"
