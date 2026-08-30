@@ -23,20 +23,23 @@ resources:
     cpu: 100m
     memory: 128Mi
 
+# Must exceed SHUTDOWN_DELAY_SECONDS (10) + DRAIN_TIMEOUT_SECONDS (20).
+terminationGracePeriodSeconds: 45
+
 livenessProbe:
   httpGet:
     path: /healthz
     port: http
-  failureThreshold: 5
-  initialDelaySeconds: 30
   periodSeconds: 10
+  timeoutSeconds: 1
+  failureThreshold: 3
 readinessProbe:
   httpGet:
     path: /readyz
     port: http
-  failureThreshold: 5
-  initialDelaySeconds: 30
-  periodSeconds: 10
+  periodSeconds: 2
+  timeoutSeconds: 1
+  failureThreshold: 1
 
 affinity:
   podAntiAffinity:
