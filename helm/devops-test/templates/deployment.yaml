@@ -17,6 +17,7 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
@@ -39,7 +40,9 @@ spec:
           {{- end }}
           env:
             - name: GREETING_NAME
-              value: {{ .Values.greetingName }}
+              value: {{ .Values.greetingName | quote }}
+            - name: VERSION
+              value: {{ .Values.image.tag | quote }}
       {{- with .Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}

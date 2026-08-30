@@ -1,20 +1,22 @@
 provider "helm" {
   kubernetes = {
-    config_path = "~/.kube/config"
+    config_path = pathexpand(var.kubeconfig_path)
   }
 }
 
 resource "helm_release" "devops-test" {
-  name       = "devops-test"
-
-  repository = "../helm"
-  chart      = "devops-test"
+  name      = "devops-test"
+  chart     = "${path.module}/../helm/devops-test"
   namespace = "app"
 
   set = [
     {
-    name  = "greetingName"
-    value = var.greeting_name
+      name  = "greetingName"
+      value = var.greeting_name
+    },
+    {
+      name  = "replicaCount"
+      value = var.replica_count
     }
   ]
 }
